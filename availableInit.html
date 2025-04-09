@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div>
+               <a href = "index.html" id = "href-logo"><img src = "img/volunteer logo.png" alt = "logo" id = "logo"></a>
+            </div>  
+           
+           <ul>
+               <li><a href="myIniti.html#Check" class = "nav">My initiatives</a></li>
+               <li><a href="availableInit.html" class = "nav">Available initiatives</a></li>
+               <li><a href="aboutUs.html" class = "nav">About us</a></li>
+            </ul> 
+          
+       </nav>
+    </header>
+    <main>
+        
+            <h1>Available initiatives</h1>
+        <div class = "grid-container" id="initiatives">
+            <!-- <div class = "grid-element">
+                <img src = "img/1.webp" alt = "img-children" class = "img-init">
+                <a href = "#" class = "link-init-1">Bomb shelter for School in Kharkiv</a>
+                <p class = "grid-paragraph">We are planning to build an underground shelter for children</p>
+            </div>
+               
+            <div class = "grid-element">
+                <img src = "img/2.webp" alt = "img-burnout" class = "img-init">
+                <a href = "#" class = "link-init-1">How to overcome burnout and turn it into a new stage of life</a>
+                <p class = "grid-paragraph">What is burnout, how to recognise and cure it</p>
+            </div>
+                
+            <div class = "grid-element">
+                <img src = "img/3.webp" alt = "img-reading" class = "img-init">
+                <a href = "#" class = "link-init-1">Reading for elderly people</a>
+                <p class = "grid-paragraph">Program gives opportunity for every volunteer to find something personal in interactions with elderlies
+                </p>
+            </div>
+           
+            <div class = "grid-element">
+                <img src = "img/4.webp" alt = "img-green-gardens" class = "img-init">
+                <a href = "#" class = "link-init-1">Green gardens</a>
+                <p class = "grid-paragraph">How green volunteers transform urban areas by creating natural oasis</p>
+            </div>
+            <div class = "grid-element">
+                <img src = "img/5.webp" alt = "img-homeless" class = "img-init">
+                <a href = "#" class = "link-init-1">Food on wheels for homeless</a>
+                <p class = "grid-paragraph">Food on wheels widens network of help for homeless</p>
+            </div>
+            <div class = "grid-element">
+                <img src = "img/6.webp" alt = "img-students" class = "img-init">
+                <a href = "#" class = "link-init-1">How student movements change cities</a>
+                <p class = "grid-paragraph">Influence of students volunteers on city`s community </p>
+            </div>
+        </div> -->
+    </main>
+    
+    <script>
+    const initiatives = [
+    { id: 1, name: "Bomb shelter for school in Kharkiv", volunteers: 5, maxdate: "2025-04-10", img: "img/1.webp" },
+    { id: 2, name: "How to overcome burnout", volunteers: 10, maxdate: "2025-04-10", img: "img/2.webp" },
+    { id: 3, name: "Reading for elderly people", volunteers: 3, maxdate: "2025-04-15", img: "img/3.webp" },
+    { id: 4, name: "Green gardens", volunteers: 2, maxdate: "2025-03-15", img: "img/4.webp" }
+];
+
+const now = new Date();
+const container = document.getElementById("initiatives");
+
+let myInitiatives = (sessionStorage.getItem("myInitiatives") || "").split(",").filter(id => id);
+
+let updatedVolunteers = JSON.parse(sessionStorage.getItem("updatedVolunteers") || "{}");
+
+let i = 0;
+while (i < initiatives.length) {
+    let initiative = initiatives[i];
+    let deadline = new Date(initiative.maxdate);
+
+    if (deadline >= now) {
+        const div = document.createElement("div");
+        div.className = "grid-element";
+        div.dataset.id = initiative.id;
+
+        let volunteersCount = updatedVolunteers[initiative.id] ?? initiative.volunteers;
+
+        div.innerHTML = `
+            <img src="${initiative.img}" alt="img-${initiative.name}" class="img-init">
+            <a href="#" class="link-init-1">${initiative.name}</a>
+            <p class="grid-paragraph">Volunteers needed: <span class="volunteers">${volunteersCount}</span></p>
+            <button class="join-btn">${myInitiatives.includes(String(initiative.id)) ? "You enrolled" : "Enroll"}</button>
+        `;
+
+        const joinBtn = div.querySelector(".join-btn");
+
+        if (myInitiatives.includes(String(initiative.id))) {
+            joinBtn.disabled = true;
+        }
+
+        joinBtn.addEventListener("click", function () {
+            let volunteersSpan = div.querySelector(".volunteers");
+            let remainingVolunteers = parseInt(volunteersSpan.textContent);
+
+            if (remainingVolunteers > 0) {
+                remainingVolunteers--;
+                volunteersSpan.textContent = remainingVolunteers;
+                this.textContent = "You enrolled";
+                this.disabled = true;
+
+                myInitiatives.push(String(initiative.id));
+                sessionStorage.setItem("myInitiatives", myInitiatives.join(","));
+
+                updatedVolunteers[initiative.id] = remainingVolunteers;
+                sessionStorage.setItem("updatedVolunteers", JSON.stringify(updatedVolunteers));
+            }
+        });
+
+        container.appendChild(div);
+    }
+
+    i++;
+}
+
+
+    </script>
+    
+    
+    
+    <footer>
+        <section>
+            <section>
+                <h5>Email:<a href = "mailto:Volunteering@gmail.com" class = "footer">Volunteering@gmail.com</a> </h5>
+                <h6>© 2025 Volunteer initiatives. All rights reserved</h6>
+        </section>
+        </section>
+    </footer>
+</body>
+</html>
